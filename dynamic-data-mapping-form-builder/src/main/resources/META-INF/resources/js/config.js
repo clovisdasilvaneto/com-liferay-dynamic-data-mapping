@@ -19,7 +19,7 @@
 								'liferay-ddm-form-builder-field-options-toolbar',
 								'liferay-ddm-form-builder-field-settings-sidebar',
 								'liferay-ddm-form-builder-field-support',
-								'liferay-ddm-form-builder-field-types-modal',
+								'liferay-ddm-form-builder-field-types-sidebar',
 								'liferay-ddm-form-builder-layout-builder-support',
 								'liferay-ddm-form-builder-layout-deserializer',
 								'liferay-ddm-form-builder-layout-visitor',
@@ -132,12 +132,9 @@
 								'liferay-ddm-form-builder-settings-retriever'
 							]
 						},
-						'liferay-ddm-form-builder-field-types-modal': {
-							path: 'form_builder_field_types_modal.js',
-							requires: [
-								'aui-form-builder-field-types-modal',
-								'liferay-ddm-form-builder-modal-support'
-							]
+						'liferay-ddl-form-builder-field-types-sidebar': {
+							path: 'form_builder_field_types_sidebar.js',
+							requires: ['aui-tabview', 'liferay-ddl-form-builder-sidebar', 'liferay-ddm-form-renderer-types', 'liferay-ddl-form-builder-field-types-sidebar-template', 'liferay-ddl-form-builder-field-types-toolbar-template']
 						},
 						'liferay-ddm-form-builder-layout-builder-support': {
 							path: 'form_builder_layout_builder_support.js',
@@ -164,12 +161,6 @@
 							requires: [
 								'aui-form-builder-field-list',
 								'aui-layout'
-							]
-						},
-						'liferay-ddm-form-builder-modal-support': {
-							path: 'form_builder_modal_support.js',
-							requires: [
-								'aui-modal'
 							]
 						},
 						'liferay-ddm-form-builder-pages-manager': {
@@ -226,6 +217,9 @@
 						},
 						'liferay-ddm-form-builder-sidebar-template': {
 							path: '../templates/sidebar.js'
+						},
+						'liferay-ddl-form-builder-field-types-sidebar-template': {
+							path: '../templates/field-types-sidebar.js'
 						},
 						'liferay-ddm-form-builder-util': {
 							path: 'form_builder_util.js',
