@@ -9,6 +9,7 @@ for (let template in templates) {
 	if (template !== 'templates') {
 		class C extends Component {};
 		Soy.register(C, templates, template);
+		C.Soy = Soy;
 		FieldTypesSidebarTemplates.push({
 			key: template,
 			component: C

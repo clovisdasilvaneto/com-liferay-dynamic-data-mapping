@@ -790,7 +790,7 @@ AUI.add(
 					_valueFieldSettingsPanel: function() {
 						var instance = this;
 
-						var fieldSettingsPanel = new Liferay.DDL.FormBuilderFieldsSettingsSidebar(
+						var fieldSettingsPanel = new Liferay.DDM.FormBuilderFieldsSettingsSidebar(
 							{
 								builder: instance
 							}
@@ -810,9 +810,10 @@ AUI.add(
 					_valueFieldTypesPanel: function() {
 						var instance = this;
 
-						var fieldTypesPanel = new Liferay.DDL.FormBuilderFieldTypesSidebar(
+						var fieldTypesPanel = new Liferay.DDM.FormBuilderFieldTypesSidebar(
 							{
-								builder: instance
+								builder: instance,
+								fieldTypes: instance.get('fieldTypes')
 							}
 						);
 

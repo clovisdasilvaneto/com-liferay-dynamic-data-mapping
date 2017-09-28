@@ -1,5 +1,5 @@
 AUI.add(
-	'liferay-ddl-form-builder-field-types-sidebar',
+	'liferay-ddm-form-builder-field-types-sidebar',
 	function(A) {
 		var AObject = A.Object;
 
@@ -10,16 +10,22 @@ AUI.add(
 		var FormBuilderFieldTypesSidebar = A.Component.create(
 			{
 				ATTRS: {
-					title: {
-						value: ''
-					}
+					fieldTypes: {
+						getter: '_getFieldTypes'
+					},
+					strings: {
+						value: {
+							basic: Liferay.Language.get('field-types-basic-elements'),
+							customized: Liferay.Language.get('field-types-customized-elements')
+						}
+					},
 				},
 
 				CSS_PREFIX: CSS_PREFIX,
 
-				EXTENDS: Liferay.DDL.FormBuilderSidebar,
+				EXTENDS: Liferay.DDM.FormBuilderSidebar,
 
-				NAME: 'liferay-ddl-form-builder-field-types-sidebar',
+				NAME: 'liferay-ddm-form-builder-field-types-sidebar',
 
 				prototype: {
 					getTemplateContext: function() {
@@ -30,18 +36,39 @@ AUI.add(
 						return A.merge(
 							context, 
 							{
+								fieldTypes: instance.get('fieldTypes'),
+								strings: instance.get('strings'),
+								title: Liferay.Language.get('field-types-sidebar-title'),
 								type: 'fieldTypes'
 							}
 						);
+					},
+
+					_getFieldTypes: function(fieldTypes) {
+						var instance = this;
+
+						var types = [];
+
+						fieldTypes.forEach(function(fieldType) {
+							types.push(
+								{
+									group: fieldType.get('group') || 'customized',
+									icon: window.DDMFieldTypesSidebar.render.Soy.toIncDom(Liferay.Util.getLexiconIconTpl(fieldType.get('icon'), 'icon-monospaced')),
+									label: fieldType.get('label')
+								}
+							);
+						});
+
+						return _.groupBy(types, 'group');
 					}
 				}
 			}
 		);
 
-		Liferay.namespace('DDL').FormBuilderFieldTypesSidebar = FormBuilderFieldTypesSidebar;
+		Liferay.namespace('DDM').FormBuilderFieldTypesSidebar = FormBuilderFieldTypesSidebar;
 	},
 	'',
 	{
-		requires: ['aui-tabview', 'liferay-ddl-form-builder-sidebar', 'liferay-ddm-form-renderer-types', 'liferay-ddl-form-builder-field-types-sidebar-template', 'liferay-ddl-form-builder-field-types-toolbar-template']
+		requires: ['aui-tabview', 'liferay-ddm-form-builder-sidebar', 'liferay-ddm-form-renderer-types', 'liferay-ddm-form-builder-field-types-sidebar-template', 'liferay-ddm-form-builder-field-types-toolbar-template']
 	}
 );

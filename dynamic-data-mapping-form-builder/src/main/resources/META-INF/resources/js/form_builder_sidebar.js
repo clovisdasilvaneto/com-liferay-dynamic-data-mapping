@@ -120,14 +120,19 @@ AUI.add(
 
 						var toolbar = instance.get('toolbar');
 
-						return {
+						var context = {
 							bodyContent: instance.get('bodyContent'),
 							closeButtonIcon: Liferay.Util.getLexiconIconTpl('angle-right', 'icon-monospaced'),
 							description: instance.get('description'),
 							title: instance.get('title'),
-							toolbarButtonIcon: Liferay.Util.getLexiconIconTpl('ellipsis-v', 'icon-monospaced'),
-							toolbarTemplateContext: toolbar.get('context')
+							toolbarButtonIcon: Liferay.Util.getLexiconIconTpl('ellipsis-v', 'icon-monospaced')
 						};
+
+						if(toolbar) {
+							context.toolbarTemplateContext = toolbar.get('context');
+						}
+
+						return context;
 					},
 
 					getTemplateRenderer: function() {
@@ -174,7 +179,11 @@ AUI.add(
 
 						var boundingBox = instance.get('boundingBox');
 
-						instance.get('toolbar').set('element', boundingBox.one('.dropdown'));
+						var toolbar = instance.get('toolbar');
+
+						if(toolbar) {
+							toolbar.set('element', boundingBox.one('.dropdown'));
+						}
 					},
 
 					_onTransitionEnd: function(event) {

@@ -1,4 +1,4 @@
-{namespace DDLFieldTypesSidebar}
+{namespace DDMFieldTypesSidebar}
 
 /**
  * Defines the delegated template for the sidebar.
@@ -11,29 +11,60 @@
  * Prints the field types sidebar.
  */
 {template .render}
-	<div class="lfr-ddl-form-builder-field-types-sidebar">
+	{@param fieldTypes: [
+			basic: list<[icon: html, label: string]>, 
+			customized: list<[icon: html, label: string]>
+		]
+	}
+	{@param strings: [basic: string, customized: string]}
+
+	<div class="lfr-ddm-form-builder-field-types-sidebar">
 
 		<ul class="nav nav-underline nav-inline">
 			<li class="nav-item">
 				<a class="active nav-link" href="#1">Field</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#1">Fieldset test</a>
+				<a class="nav-link" href="#1">Fieldset</a>
 			</li>
 		</ul>
 
 		<ul class="list-group">
-			<li class="list-group-header">Basic Elements</li>
-			<li class="list-group-item list-group-item-flex">
-				<div class="flex-col">
-					<div class="sticker sticker-secondar"></div>
-				</div>
-				<div class="flex-col flex-col-expand">
-					<h4 class="list-group-title text-truncate">Account Example One</h4>
-					<p class="list-group-subtitle text-truncate">Second Level Text</p>
-				</div>
-			</li>
+			<li class="list-group-header">{$strings.basic}</li>
+
+			{foreach $fieldType in $fieldTypes.basic}
+				{call .render_field_type_group}
+					{param fieldType: $fieldType}
+				{/call}
+			{/foreach}
+		</ul>
+
+		<ul class="list-group">
+			<li class="list-group-header">{$strings.customized}</li>
+
+			{foreach $fieldType in $fieldTypes.customized}
+				{call .render_field_type_group}
+					{param fieldType: $fieldType}
+				{/call}
+			{/foreach}
 		</ul>
 
 	</div>
+{/template}
+
+/**
+ * Render a field type group
+ */
+{template .render_field_type_group}
+	{@param fieldType: [icon: html, label: string]}
+
+	<li class="list-group-item list-group-item-flex">
+		<div class="flex-col">
+			<div class="sticker sticker-secondar">{$fieldType.icon}</div>
+		</div>
+		<div class="flex-col flex-col-expand">
+			<h4 class="list-group-title text-truncate">{$fieldType.label}</h4>
+			<p class="list-group-subtitle text-truncate">Second Level Text</p>
+		</div>
+	</li>
 {/template}

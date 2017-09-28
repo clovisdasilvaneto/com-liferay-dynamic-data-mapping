@@ -134,7 +134,7 @@
 						},
 						'liferay-ddl-form-builder-field-types-sidebar': {
 							path: 'form_builder_field_types_sidebar.js',
-							requires: ['aui-tabview', 'liferay-ddl-form-builder-sidebar', 'liferay-ddm-form-renderer-types', 'liferay-ddl-form-builder-field-types-sidebar-template', 'liferay-ddl-form-builder-field-types-toolbar-template']
+							requires: ['aui-tabview', 'liferay-ddl-form-builder-sidebar', 'liferay-ddm-form-renderer-types', 'liferay-ddm-form-builder-field-types-sidebar-template', 'liferay-ddm-form-builder-field-types-toolbar-template']
 						},
 						'liferay-ddm-form-builder-layout-builder-support': {
 							path: 'form_builder_layout_builder_support.js',
@@ -218,7 +218,7 @@
 						'liferay-ddm-form-builder-sidebar-template': {
 							path: '../templates/sidebar.js'
 						},
-						'liferay-ddl-form-builder-field-types-sidebar-template': {
+						'liferay-ddm-form-builder-field-types-sidebar-template': {
 							path: '../templates/field-types-sidebar.js'
 						},
 						'liferay-ddm-form-builder-util': {
