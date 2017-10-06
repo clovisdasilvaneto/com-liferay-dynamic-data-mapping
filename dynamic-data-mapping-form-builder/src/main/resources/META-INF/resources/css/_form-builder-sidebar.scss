@@ -1,12 +1,9 @@
 .form-builder-sidebar {
-	$max-width: 500px;
-
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-
 	&.form-builder-sidebar.sidenav-menu-slider {
-		max-width: $max-width;
-		width: 0;
 		z-index: 10;
+		max-width: 380px;
+		opacity: 0;
+		transition-timing-function: ease-out;
 
 		&.closed {
 			z-index: 9;
@@ -14,25 +11,16 @@
 
 		&.open {
 			width: 100%;
+			opacity: 1;
 		}
 	}
 
-	.sidebar-body {
-		height: 100%;
-		max-width: $max-width;
-		padding: 0;
-		width: 100%;
-	}
-
-	.sidebar-content {
-		max-width: $max-width;
-		right: 0;
-		top: 0;
-		width: 100%;
-	}
-
 	.sidebar-header {
-		margin-top: 64px;
+		margin-top: 72px;
+	}
+
+	.sidebar-body {
+		padding: 0;
 	}
 
 	.navbar-nav {
@@ -51,13 +39,24 @@
 		}
 	}
 
+	.navbar-default {
+		padding-bottom: 1px;
+	}
+
 	.tab-pane {
 		bottom: 0;
-		max-width: $max-width;
 		overflow: auto;
 		padding: 24px;
 		position: absolute;
 		top: 221px;
 		width: 100%;
+	}
+
+	.navbar-default .navbar-nav > li > a {
+		padding: 10px 16px;
+	}
+
+	.lexicon-icon-angle-right {
+		color: #6b6c7e;
 	}
 }
