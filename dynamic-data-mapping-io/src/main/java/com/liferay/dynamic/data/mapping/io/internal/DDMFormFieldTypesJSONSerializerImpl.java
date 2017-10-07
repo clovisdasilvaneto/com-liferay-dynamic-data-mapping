@@ -79,6 +79,10 @@ public class DDMFormFieldTypesJSONSerializerImpl
 				ddmFormFieldType.getName());
 
 		jsonObject.put(
+			"group",
+			MapUtil.getString(
+				ddmFormFieldTypeProperties, "ddm.form.field.type.group"));
+		jsonObject.put(
 			"icon",
 			MapUtil.getString(
 				ddmFormFieldTypeProperties, "ddm.form.field.type.icon",
