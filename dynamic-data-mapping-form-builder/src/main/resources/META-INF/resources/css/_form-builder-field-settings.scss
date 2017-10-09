@@ -24,8 +24,6 @@
 	}
 
 	.lfr-ddm-form-page {
-		margin-top: -56px;
-
 		&.active.advanced {
 			display: block;
 		}
@@ -33,6 +31,8 @@
 		&.advanced {
 			display: none;
 		}
+
+		margin-top: -56px;
 	}
 
 	.key-value-editor {
