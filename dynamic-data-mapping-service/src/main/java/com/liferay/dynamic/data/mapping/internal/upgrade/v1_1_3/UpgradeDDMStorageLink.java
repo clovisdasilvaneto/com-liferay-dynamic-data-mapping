@@ -36,18 +36,22 @@ public class UpgradeDDMStorageLink extends UpgradeProcess {
 			ps.setLong(1, ddmStructureId);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				rs.first();
+				if (rs.next()) {
+					return rs.getLong("structureVersionId");
+				}
 
-				return rs.getLong("structureVersionId");
+				return 0;
 			}
 		}
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		alter(
-			DDMStorageLinkTable.class,
-			new AlterTableAddColumn("structureVersionId LONG"));
+		if (!hasColumn("DDMStorageLink", "structureVersionId")) {
+			alter(
+				DDMStorageLinkTable.class,
+				new AlterTableAddColumn("structureVersionId LONG"));
+		}
 
 		try (PreparedStatement ps1 = connection.prepareStatement(
 				"select structureId from DDMStorageLink");
@@ -61,10 +65,15 @@ public class UpgradeDDMStorageLink extends UpgradeProcess {
 			while (rs.next()) {
 				long ddmStructureId = rs.getLong("structureId");
 
-				ps2.setLong(1, getLatestStructureVersionId(ddmStructureId));
-				ps2.setLong(2, ddmStructureId);
+				long ddmStructureVersionId = getLatestStructureVersionId(
+					ddmStructureId);
 
-				ps2.addBatch();
+				if (ddmStructureVersionId > 0) {
+					ps2.setLong(1, ddmStructureVersionId);
+					ps2.setLong(2, ddmStructureId);
+
+					ps2.addBatch();
+				}
 			}
 
 			ps2.executeBatch();
