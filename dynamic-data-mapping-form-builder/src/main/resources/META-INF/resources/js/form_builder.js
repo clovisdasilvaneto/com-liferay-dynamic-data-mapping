@@ -5,13 +5,21 @@ AUI.add(
 
 		var FormBuilderConfirmDialog = Liferay.DDM.FormBuilderConfirmationDialog;
 
+		var FormBuilderUtil = Liferay.DDM.FormBuilderUtil;
+
 		var FieldSets = Liferay.DDM.FieldSets;
 
 		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
 
-		var FormBuilderUtil = Liferay.DDM.FormBuilderUtil;
+		var CSS_RESIZE_COL_DRAGGABLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable');
+
+		var CSS_RESIZE_COL_DRAGGABLE_BORDER = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'border');
+
+		var CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle');
 
 		var Lang = A.Lang;
+
+		var CSS_EDIT_FIELD_BUTTON = A.getClassName('lfr-edit-field');
 
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
@@ -27,9 +35,17 @@ AUI.add(
 
 		var TPL_CONFIRM_CANCEL_FIELD_EDITION = '<p>' + Liferay.Language.get('are-you-sure-you-want-to-cancel') + '</p>';
 
+		var TPL_CONFIRM_DELETE_FIELD = '<p>' + Liferay.Language.get('are-you-sure-you-want-to-delete-this-field') + '</p>';
+
 		var TPL_REQURIED_FIELDS = '<label class="hide required-warning">{message}</label>';
 
 		var Util = Liferay.DDM.Renderer.Util;
+
+		var MOVE_COLUMN_CONTAINER = '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
+			'<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '">' +
+			Liferay.Util.getLexiconIconTpl('horizontal-scroll') + '</div>';
+
+		var MOVE_COLUMN_TPL = '<div class="' + CSS_RESIZE_COL_DRAGGABLE + ' lfr-tpl">' + MOVE_COLUMN_CONTAINER + '</div>';
 
 		var FormBuilder = A.Component.create(
 			{
@@ -130,8 +146,10 @@ AUI.add(
 						var boundingBox = instance.get('boundingBox');
 
 						instance._eventHandlers = [
-							boundingBox.delegate('click', A.bind('_afterFieldClick', instance), '.' + CSS_FIELD, instance),
+							boundingBox.delegate('click', A.bind('_afterFieldClick', instance), '.' + CSS_EDIT_FIELD_BUTTON, instance),
 							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a'),
+							boundingBox.delegate('click', instance._removeFieldCol, '.lexicon-icon-trash', instance),
+							//boundingBox.delegate('mousedown', instance._applyDragAndDrop, '.layout-col-content', instance),
 							instance.after('editingLanguageIdChange', instance._afterEditingLanguageIdChange),
 							instance.after('liferay-ddm-form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
 							instance.after('render', instance._afterFormBuilderRender, instance),
@@ -444,10 +462,32 @@ AUI.add(
 						var config = {
 							body: TPL_CONFIRM_CANCEL_FIELD_EDITION,
 							confirmFn: confirmFn,
-							id: 'cancelFieldChangesDialog'
+							id: 'cancelFieldChangesDialog',
+							labelHTML: Liferay.Language.get('yes-cancel'),
+							title: Liferay.Language.get('cancel-field-changes-question')
+
 						};
 
 						FormBuilderConfirmDialog.open(config);
+					},
+
+					openConfirmDeleteFieldDialog: function(confirmFn) {
+						var instance = this;
+
+						var config = {
+							body: TPL_CONFIRM_DELETE_FIELD,
+							confirmFn: confirmFn,
+							id: 'deleteFieldDialog',
+							labelHTML: Liferay.Language.get('yes-delete'),
+							title: Liferay.Language.get('delete-field-question')
+
+						};
+
+						FormBuilderConfirmDialog.open(config);
+					},
+
+					removeField: function(field) {
+						var instance = this;
 					},
 
 					showFieldSettingsPanel: function(field) {
@@ -532,7 +572,7 @@ AUI.add(
 					_afterFieldClick: function(event) {
 						var instance = this;
 
-						var field = event.currentTarget.getData('field-instance');
+						var field = event.currentTarget.ancestor('.' + CSS_FIELD).getData('field-instance');
 
 						instance.editField(field);
 					},
@@ -547,7 +587,10 @@ AUI.add(
 						var instance = this;
 
 						instance._fieldToolbar.destroy();
+						
 						instance.getFieldSettingsPanel();
+						instance._applyDragAndDrop();
+						instance._renderArrowActions();
 						instance._renderFields();
 						instance._renderPages();
 						instance._renderRequiredFieldsWarning();
@@ -595,6 +638,207 @@ AUI.add(
 						instance.createNewField(event.fieldType);
 					},
 
+					_applyDragAndDrop: function(event) {
+						var instance = this;
+						var fieldNodeStart;
+						var fieldColStart;
+						var fieldNodeEnd;
+						var fieldColEnd;
+						var sortable1;
+						var proxyActive;
+						var activeDropEnter;
+						var listMap = new Map();
+						var fieldDropped = false;
+						var auxFieldColStart;
+						var pageFields = [];
+
+						var gridDOM = [];
+
+						var rows  = A.all('.layout-row').get('nodes');
+
+						rows.forEach(function(row) {
+							gridDOM.push(row.all('.col').get('nodes'));
+						});
+
+						console.log('gridDOM',gridDOM);
+
+						var layouts = instance.get('layouts');
+
+						console.log('layouts',layouts);
+
+						var context = instance.get('context');
+
+						console.log('context',context);
+
+						var container = instance.get('container');
+						console.log('container',container);
+						//console.log('instance.get(layouts) inicio', instance.get('layouts'));
+
+
+						//var context = Liferay.component('_com_liferay_dynamic_data_lists_form_web_portlet_DDLFormAdminPortlet_formBuilder').get('context');
+						
+						//remove all add boxes
+						// var listCols = A.all('.form-builder-field-list-empty').get('node');
+						// if(listCols) {
+						// 	listCols.forEach(function(element) {
+						// 		if(!element.ancestor('.col-empty')) {
+						// 			element.ancestor('.col').addClass('col-empty');
+						// 			element.ancestor('.col').empty();
+						// 		}
+						// 	});
+						// 	A.all('.form-builder-field-list-add-container').remove();
+						// }
+
+
+						sortable1 = new A.SortableLayout({
+								delegateConfig: {
+									//invalid: '.invalidDrag',
+									target: false
+								},
+								dragNodes: '.layout-col-content',
+								dropNodes: '.layout-row .col-empty',
+								proxyNode: '<div></div>'
+							});
+
+						sortable1.after('drag:start',function (event) {
+			
+							console.log("START");
+							fieldNodeStart = event.target.get('node');
+							fieldColStart = fieldNodeStart.ancestor('.col');
+
+							fieldNodeStart.addClass('hidden');
+							fieldColStart.addClass('col-empty');
+							fieldColStart.addClass('col-empty-over');
+							listMap.set(fieldColStart._yuid, fieldColStart);
+		
+							auxFieldColStart = fieldColStart;
+
+							proxyActive = A.one('.yui3-dd-proxy');
+							if(proxyActive) {
+								proxyActive.empty();
+								proxyActive.append(fieldNodeStart._node.innerHTML);
+							}
+
+							
+							
+						});
+
+						sortable1.on('drag:enter',function (event) {
+							console.log("ENTER");
+							var instance = this;
+		
+								if(fieldColStart) {
+									listMap.get(fieldColStart._yuid).removeClass('col-empty-over');
+									listMap.delete(fieldColStart._yuid);
+								}
+								
+
+								//console.log('listMap Before',listMap);
+		
+								activeDropEnter = instance.activeDrop.get('node');
+								activeDropEnter.addClass('col-empty-over');
+								listMap.set(activeDropEnter._yuid, activeDropEnter);
+								//console.log('listMap After',listMap);
+			
+							
+							fieldColStart = null;
+							
+							
+						});
+
+						sortable1.on('drag:exit',function (event) {
+
+							var instance = this;
+							listMap.get(activeDropEnter._yuid).removeClass('col-empty-over');
+							listMap.delete(activeDropEnter._yuid);
+
+						});
+
+						sortable1.on('drag:end',function (event) {
+
+							fieldNodeEnd = event.target.get('node');
+							fieldColEnd = fieldNodeEnd.ancestor('.col');
+		
+							auxFieldColStart.addClass('col-empty');	
+							fieldColEnd.removeClass('col-empty'); 
+							fieldNodeStart.removeClass('hidden');
+							
+							listMap.forEach(function (element) {
+								element.removeClass('col-empty-over');
+							});
+
+							listMap.clear();
+
+							var activePage;
+							var posRowStart;
+							var posColStart;
+							var posRowEnd;
+							var posColEnd;
+
+							gridDOM.forEach(function(cols, indexRow) {
+								cols.forEach(function(col, indexCol) {
+									if(auxFieldColStart._node.id == col._node.id) {
+										posRowStart = indexRow;
+										posColStart = indexCol;
+										return;
+									}
+								});
+							});
+
+							gridDOM.forEach(function(cols, indexRow) {
+								cols.forEach(function(col, indexCol) {
+									if(fieldColEnd._node.id == col._node.id) {
+										posRowEnd = indexRow;
+										posColEnd = indexCol;
+										return;
+									}
+								});
+							});
+
+							activePage = A.one('.form-builder-tabs-content li.active .progress-bar-step')._node.innerHTML;
+
+							console.log('Na página: '+ activePage);
+							console.log('Saiu da linha ( '+ posRowStart + ' ) coluna ('+ posColStart +')');
+							console.log('Para a linha ( '+ posRowEnd + ' ) coluna ('+ posColEnd +')');
+
+							
+							console.log('context antes 2', context);
+
+							var newValue = context.pages[activePage - 1].rows[posRowStart].columns[posColStart];
+							console.log('newValue',newValue.fields[0]);
+							console.log('posENd', context.pages[activePage - 1].rows[posRowEnd].columns[posColEnd]);
+							context.pages[activePage - 1].rows[posRowEnd].columns[posColEnd].fields = newValue.fields;
+							context.pages[activePage - 1].rows[posRowStart].columns[posColStart].fields = []; 
+
+							console.log('context depois', context);
+							console.log('instance depois', instance);
+
+							var layouts = instance._valueLayouts();
+
+							layouts = instance.set('layouts',layouts);
+							
+							
+							
+							sortable1.destroy();
+							instance._applyDragAndDrop();
+						
+
+
+
+						});
+						
+					},
+
+					_createFieldActions: function() {
+						var instance = this;
+
+						instance.eachFields(
+							function(field) {
+								field.get('container').append(instance._getFieldActionsLayout());
+							}
+						);
+					},
+
 					_currentRowIndex: function() {
 						var instance = this;
 
@@ -613,6 +857,15 @@ AUI.add(
 						}
 
 						return 0;
+					},
+
+					_getFieldActionsLayout: function() {
+						var instance = this;
+
+						return '<div class="lfr-ddm-field-actions-container"> ' +
+							'<button class="btn btn-monospaced btn-sm label-primary lfr-edit-field" type="button">' + Liferay.Util.getLexiconIconTpl('pencil') + '</button>' +
+							'<button class="btn btn-monospaced btn-sm label-primary" type="button">' + Liferay.Util.getLexiconIconTpl('trash') + '</button>' +
+							'</div>';
 					},
 
 					_getFieldSettingsPanel: function(fieldSettingsPanel) {
@@ -753,6 +1006,44 @@ AUI.add(
 						instance.showFieldTypesPanel();
 					},
 
+					_removeFieldCol: function(event) {
+						var col;
+						var field = event.currentTarget.ancestor('.' + CSS_FIELD).getData('field-instance');
+						var fieldNode = event.currentTarget.ancestor('.' + CSS_FIELD);
+						var instance = this;
+						var row;
+
+						col = field.get('content').ancestor('.col').getData('layout-col');
+						field._col = col;
+						if (field) {
+
+							instance.openConfirmDeleteFieldDialog(
+								function() {
+									var layout = instance.getActiveLayout();
+
+									field._col.get('value').removeField(field);
+									row = field.get('content').ancestor('.layout-row');
+									layout.normalizeColsHeight(new A.NodeList(row));
+									fieldNode.remove();
+									instance.getFieldSettingsPanel().close();
+								}
+							);
+						}
+					},
+
+					_renderArrowActions: function() {
+						var instance = this;
+
+						instance._layoutBuilder.TPL_RESIZE_COL_DRAGGABLE = MOVE_COLUMN_TPL;
+						instance._layoutBuilder._uiSetEnableResizeCols(instance._layoutBuilder.get('enableResizeCols'));
+
+						instance.get('boundingBox').all('.' + CSS_RESIZE_COL_DRAGGABLE + ':not(.lfr-tpl)').each(
+							function(handler) {
+								handler.html(MOVE_COLUMN_CONTAINER);
+							}
+						);
+					},
+
 					_renderContentBox: function() {
 						var instance = this;
 
@@ -787,6 +1078,7 @@ AUI.add(
 								var row = instance.getFieldRow(field);
 
 								activeLayout.normalizeColsHeight(new A.NodeList(row));
+								//field.get('container').append(instance._getFieldActionsLayout());
 							}
 						);
 
@@ -801,6 +1093,8 @@ AUI.add(
 						visitor.set('fieldHandler', A.bind('_renderField', instance));
 
 						visitor.visit();
+
+						instance._createFieldActions();
 					},
 
 					_renderPages: function() {
@@ -992,6 +1286,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-form-builder', 'aui-form-builder-pages', 'aui-popover', 'liferay-ddm-form-builder-confirmation-dialog', 'liferay-ddm-form-builder-field-list', 'liferay-ddm-form-builder-field-options-toolbar', 'liferay-ddm-form-builder-fieldset', 'liferay-ddm-form-builder-field-settings-sidebar', 'liferay-ddm-form-builder-field-support', 'liferay-ddm-form-builder-field-type', 'liferay-ddm-form-builder-field-types-sidebar', 'liferay-ddm-form-builder-layout-deserializer', 'liferay-ddm-form-builder-layout-visitor', 'liferay-ddm-form-builder-pages-manager', 'liferay-ddm-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer', 'liferay-ddm-form-renderer-util']
+		requires: ['aui-form-builder', 'aui-form-builder-pages', 'aui-popover', 'aui-sortable-layout', 'liferay-ddm-form-builder-confirmation-dialog', 'liferay-ddm-form-builder-field-list', 'liferay-ddm-form-builder-field-options-toolbar', 'liferay-ddm-form-builder-field-settings-sidebar', 'liferay-ddm-form-builder-field-support', 'liferay-ddm-form-builder-field-type', 'liferay-ddm-form-builder-field-types-sidebar', 'liferay-ddm-form-builder-fieldset', 'liferay-ddm-form-builder-layout-deserializer', 'liferay-ddm-form-builder-layout-visitor', 'liferay-ddm-form-builder-pages-manager', 'liferay-ddm-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer', 'liferay-ddm-form-renderer-util']
 	}
 );
