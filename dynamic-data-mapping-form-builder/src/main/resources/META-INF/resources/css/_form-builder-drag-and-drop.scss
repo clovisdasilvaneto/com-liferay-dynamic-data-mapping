@@ -1,0 +1,56 @@
+.form-builder {
+
+    .lexicon-icon-trash {
+        cursor: pointer;
+    }
+
+    .col .col-drag-move {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        cursor: -webkit-grabbing;
+        
+        
+    }
+
+    .layout-col-content {
+        height: 100%;
+        padding: 0 32px;
+        border-radius: 5px;
+    }
+
+    fieldset[disabled] .form-control, .form-control[disabled] {
+        background-color: #869CAD;
+    }
+
+
+    
+    .form-builder-layout
+    .layout-row-container-row .layout-row .col.col-empty.col-empty-over{
+        opacity: 1;
+        border-radius: 4px;
+        background-color: #f0f5ff;
+        border: 2px dashed #80acff;  
+        &:before {
+            content: 'Drop here';
+            color: #2e5aac;
+            font-size: 14px;
+            text-align: center;
+
+        }
+        
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+    
+
+}
+
+div.sortable-layout-drag-indicator {
+    background-color: rgba(17, 17, 17, 0);
+}
+
+.yui3-dd-proxy .form-builder-field-list-container{
+    height: 134px;
+    opacity: 0.85;
+}
