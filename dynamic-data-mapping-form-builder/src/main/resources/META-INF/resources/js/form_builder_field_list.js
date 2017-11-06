@@ -15,8 +15,6 @@ AUI.add(
 
 		var CSS_FIELD_LIST_ADD_CONTAINER = A.getClassName('form', 'builder', 'field', 'list', 'add', 'container');
 
-		var CSS_FIELD_MOVE_TARGET = A.getClassName('form', 'builder', 'field', 'move', 'target');
-
 		var FormBuilderFieldList = A.Component.create(
 			{
 				ATTRS: {
@@ -56,7 +54,7 @@ AUI.add(
 							this.get('content').one('.' + CSS_FIELD_LIST_ADD_BUTTON).removeAttribute('disabled');
 						}
 					},
-
+					
 					_onClickAddField: function(event) {
 						var instance = this;
 
@@ -67,19 +65,12 @@ AUI.add(
 						FormBuilderFieldList.superclass._onClickAddField.apply(instance, arguments);
 					},
 
-					_uiSetField: function(container, field, index) {
-						var instance = this;
+					_onMouseEnterAddButton: function() {
 
-						var fields = instance.get('fields');
+					},
 
-						FormBuilderFieldList.superclass._uiSetField.apply(instance, arguments);
+					_onMouseLeaveAddButton: function() {
 
-						if (index && index < fields.length) {
-							var content = field.get('content');
-
-							content.previous('.' + CSS_FIELD_MOVE_TARGET).addClass(CSS_BETWEEN_FIELDS);
-							content.previous('.' + CSS_FIELD_LIST_ADD_CONTAINER).addClass(CSS_BETWEEN_FIELDS);
-						}
 					}
 				}
 			}

@@ -1,0 +1,73 @@
+.form-builder-layout {
+	.layout-row {
+		border-width: 0;
+	}
+
+	.form-builder-field-list,
+	.form-builder-field-list-container,
+	.form-builder-field-actions-container,
+	.form-builder-field {
+		height: 100%;
+	}
+
+	.form-builder-field {
+		min-height: 113px;
+
+		&:hover {
+			.form-builder-field-actions-container {
+				opacity: 1;
+			}
+		}
+	}
+
+	.form-builder-field-actions-container {
+		@include transition(opacity 0.2s linear);
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		position: absolute;
+		right: 0;
+		top: 0;
+		opacity: 0;
+	
+		.btn {
+			cursor: pointer;
+			margin: #{$baseline / 2} 0;
+			background-color: $light;
+
+			&:hover {
+				background-color: $primary-color;
+			}
+		}
+	}
+
+	.layout-builder-resize-col-draggable {
+		@include transition(opacity 0.2s linear);
+	}
+
+	.layout-builder-resize-col-draggable-dragging {
+		.layout-builder-resize-col-draggable-handle {
+			background: transparent;
+		}
+	}
+
+	.layout-builder-resize-col-draggable-handle {
+		border-radius: 0;
+		text-align: center;
+		color: $primary-color;
+		padding: 0;
+		font-size: 20px;
+
+		&, &:hover {
+			background-color: transparent;
+		}
+
+		&:hover {
+			color: darken($primary-color, 10%);
+		}
+	}
+
+	.layout-builder-resize-col-breakpoint-line {
+		border-color: transparent;
+	}
+}
