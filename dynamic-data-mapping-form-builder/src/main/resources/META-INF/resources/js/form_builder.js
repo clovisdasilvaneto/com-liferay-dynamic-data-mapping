@@ -3,7 +3,23 @@ AUI.add(
 	function(A) {
 		var AArray = A.Array;
 
-		var CSS_DELETE_FIELD_BUTTON = A.getClassName('lfr-delete-field');
+		var FormBuilderConfirmDialog = Liferay.DDM.FormBuilderConfirmationDialog;
+
+		var FormBuilderUtil = Liferay.DDM.FormBuilderUtil;
+
+		var FieldSets = Liferay.DDM.FieldSets;
+
+		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
+
+		var CSS_RESIZE_COL_DRAGGABLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable');
+
+		var CSS_RESIZE_COL_DRAGGABLE_BORDER = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'border');
+
+		var CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle');
+
+		var Lang = A.Lang;
+
+		var CSS_EDIT_FIELD_BUTTON = A.getClassName('lfr-edit-field');
 
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
@@ -13,27 +29,9 @@ AUI.add(
 
 		var CSS_PAGES = A.getClassName('form', 'builder', 'pages', 'lexicon');
 
-		var CSS_RESIZE_COL_DRAGGABLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable');
-
-		var CSS_RESIZE_COL_DRAGGABLE_BORDER = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'border');
-
-		var CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle');
-
 		var CSS_ROW_CONTAINER_ROW = A.getClassName('layout', 'row', 'container', 'row');
 
-		var FormBuilderConfirmDialog = Liferay.DDM.FormBuilderConfirmationDialog;
-
-		var FormBuilderUtil = Liferay.DDM.FormBuilderUtil;
-
-		var FieldSets = Liferay.DDM.FieldSets;
-
-		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
-
-		var Lang = A.Lang;
-
-		var MOVE_COLUMN_CONTAINER = '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' + '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '">' + Liferay.Util.getLexiconIconTpl('horizontal-scroll') + '</div>';
-
-		var MOVE_COLUMN_TPL = '<div class="' + CSS_RESIZE_COL_DRAGGABLE + ' lfr-tpl">' + MOVE_COLUMN_CONTAINER + '</div>';
+		var MAXIMUM_COLS_PER_ROW = 12;
 
 		var TPL_CONFIRM_CANCEL_FIELD_EDITION = '<p>' + Liferay.Language.get('are-you-sure-you-want-to-cancel') + '</p>';
 
