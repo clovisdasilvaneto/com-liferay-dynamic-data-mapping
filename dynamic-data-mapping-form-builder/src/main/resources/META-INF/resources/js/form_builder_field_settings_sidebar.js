@@ -271,7 +271,7 @@ AUI.add(
 
 					_getFieldTypeMenuLayout: function(fieldType) {
 						var instance = this;
-						
+
 						return '<div>' + Liferay.Util.getLexiconIconTpl(fieldType.get('icon')) + '</div><span>' + fieldType.get('label') + '</span>' + Liferay.Util.getLexiconIconTpl('caret-bottom');
 					},
 
