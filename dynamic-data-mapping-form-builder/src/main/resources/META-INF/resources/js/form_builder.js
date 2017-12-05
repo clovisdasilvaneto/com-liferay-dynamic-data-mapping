@@ -1242,6 +1242,7 @@ AUI.add(
 
 								activeLayout.normalizeColsHeight(new A.NodeList(row));
 								field.get('container').append(instance._getFieldActionsLayout());
+								field.get('container').ancestor('.col').removeClass('col-empty');
 							}
 						);
 
