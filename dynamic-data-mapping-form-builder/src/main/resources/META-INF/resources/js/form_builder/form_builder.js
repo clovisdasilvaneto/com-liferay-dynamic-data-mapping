@@ -405,6 +405,7 @@ AUI.add(
 
 						layoutColumn.get('value').get('fields')[0].get('container').append(instance._getFieldActionsLayout());
 
+						instance._destroySortable(instance.sortable1);
 						instance._traverseFormPages();
 						instance._applyDragAndDrop();
 
