@@ -67,6 +67,16 @@ AUI.add(
 						return EditorField.superclass.hasFocus.apply(instance, arguments) || instance._hasAlloyEditorFocus();
 					},
 
+					processEvaluationContext: function(context) {
+						var instance = this;
+
+						if (!instance.hasFocus()) {
+							context.valid = true;
+						}
+
+						return context;
+					},
+
 					render: function() {
 						var instance = this;
 
@@ -101,7 +111,9 @@ AUI.add(
 										}
 									},
 									namespace: name,
+									onBlurMethod: A.bind(instance._afterBlur, instance),
 									onChangeMethod: A.bind(A.debounce(instance._onChangeEditor, 100), instance),
+									onFocusMethod: A.bind(instance._afterFocus, instance),
 									plugins: [],
 									textMode: false
 								}
