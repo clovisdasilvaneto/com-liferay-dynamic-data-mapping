@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"inputmask": "^3.3.11",
 		"metal-component": "^2.14.0",
 		"metal-soy": "^2.14.0"
 	},
