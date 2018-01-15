@@ -27,6 +27,13 @@ AUI.add(
 						value: ''
 					},
 
+					symbols: {
+						value: {
+							decimalSeparatorSymbol: '.',
+							groupSeparatorSymbol: ','
+						}
+					},
+
 					type: {
 						value: 'numeric'
 					}
@@ -100,11 +107,13 @@ AUI.add(
 					_afterNumericFieldRender: function() {
 						var instance = this;
 
+						var symbols = instance.get('symbols');
+
 						var inputMask = new DDMNumeric.Inputmask(
 							'decimal',
 							{
-								groupSeparator: ',',
-								radixPoint: '.'
+								groupSeparator: symbols.groupSeparatorSymbol,
+								radixPoint: symbols.decimalSeparatorSymbol
 							}
 						);
 
