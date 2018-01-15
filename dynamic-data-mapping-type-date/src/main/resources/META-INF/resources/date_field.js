@@ -101,7 +101,7 @@ AUI.add(
 							var calendarNode = datePicker.calendar.get('boundingBox');
 
 							hasFocus = hasFocus || calendarNode.contains(document.activeElement);
-						}						
+						}
 
 						return hasFocus;
 					},
@@ -178,7 +178,7 @@ AUI.add(
 						var instance = this;
 
 						var triggerNode = instance.getTriggerNode();
-						
+
 						var date = event.newSelection;
 
 						if (isArray(date) && date.length) {
