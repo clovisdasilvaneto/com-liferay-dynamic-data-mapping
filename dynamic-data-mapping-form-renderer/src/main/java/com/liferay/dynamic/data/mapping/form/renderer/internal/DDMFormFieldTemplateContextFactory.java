@@ -150,6 +150,8 @@ public class DDMFormFieldTemplateContextFactory {
 		setDDMFormFieldTemplateContextNestedTemplateContexts(
 			ddmFormFieldTemplateContext, nestedDDMFormFieldTemplateContext);
 
+		setDDMFormFieldTemplateContextMultiple(
+				ddmFormFieldTemplateContext, ddmFormFieldEvaluationResult);
 		setDDMFormFieldTemplateContextOptions(
 			ddmFormFieldTemplateContext, ddmFormFieldEvaluationResult,
 			ddmFormField.getDDMFormFieldOptions());
@@ -455,6 +457,14 @@ public class DDMFormFieldTemplateContextFactory {
 
 		ddmFormFieldRenderingContext.put(
 			"nestedFields", nestedDDMFormFieldTemplateContexts);
+	}
+	
+	protected void setDDMFormFieldTemplateContextMultiple(
+			Map<String, Object> ddmFormFieldTemplateContext,
+			DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult) {
+
+			ddmFormFieldTemplateContext.put(
+				"multiple", ddmFormFieldEvaluationResult.isMultiple());
 	}
 
 	protected void setDDMFormFieldTemplateContextOptions(
