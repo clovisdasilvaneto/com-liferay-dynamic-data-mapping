@@ -101,9 +101,6 @@ AUI.add(
 										removePlugins: 'contextmenu,elementspath,image,link,liststyle,resize,tabletools,toolbar',
 										srcNode: editorNode,
 										toolbars: {
-											add: {
-												buttons: ['hline', 'table']
-											},
 											styles: {
 												selections: AlloyEditor.Selections,
 												tabIndex: 1
@@ -112,7 +109,7 @@ AUI.add(
 									},
 									namespace: name,
 									onBlurMethod: A.bind(instance._afterBlur, instance),
-									onChangeMethod: A.bind(A.debounce(instance._onChangeEditor, 100), instance),
+									onChangeMethod: A.bind(instance._onChangeEditor, instance),
 									onFocusMethod: A.bind(instance._afterFocus, instance),
 									plugins: [],
 									textMode: false
